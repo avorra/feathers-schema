@@ -45,9 +45,7 @@ export type UserData = FromSchema<typeof userDataSchema>
 
 export const userDataResolver = resolve<UserData, HookContext<Application>>({
   properties: {
-    password: async () => {
-      return 'hashed'
-    }
+    password: () => 'hashed'
   }
 })
 
@@ -66,18 +64,18 @@ export const userSchema = {
 export type User = FromSchema<typeof userSchema>
 
 export const userResolver = resolve<User, HookContext<Application>>({
-  name: async (_value, user) => user.email.split('@')[0]
+  name: (_value, user) => user.email.split('@')[0]
 })
 
 export const userExternalResolver = resolve<User, HookContext<Application>>({
   properties: {
     password: async (): Promise<undefined> => undefined,
-    email: async () => '[redacted]'
+    email: () => '[redacted]'
   }
 })
 
 export const secondUserResolver = resolve<User, HookContext<Application>>({
-  name: async (value, user) => `${value} (${user.email})`
+  name: (value, user) => `${value} (${user.email})`
 })
 
 export const messageDataSchema = {
@@ -179,7 +177,7 @@ export type MessageQuery = FromSchema<typeof messageQuerySchema>
 export const messageQueryValidator = getValidator(messageQuerySchema, fixtureAjv)
 
 export const messageQueryResolver = resolve<MessageQuery, HookContext<Application>>({
-  userId: async (value, _query, context) => {
+  userId(value, _query, context) {
     if (context.params?.user) {
       return context.params.user.id
     }
@@ -208,8 +206,8 @@ class CustomService {
 
 const customMethodDataResolver = resolve<any, HookContext<Application>>({
   properties: {
-    userId: async () => 0,
-    additionalData: async () => 'additional data'
+    userId: () => 0,
+    additionalData: () => 'additional data'
   }
 })
 

@@ -1,8 +1,9 @@
 import { Schema } from './schema';
-export type PropertyResolver<T, V, C> = ((value: V | undefined, obj: T, context: C, status: ResolverStatus<T, C>) => Promise<V | undefined>) & {
+type PromiseOrLiteral<V> = Promise<V> | V;
+export type PropertyResolver<T, V, C> = ((value: V | undefined, obj: T, context: C, status: ResolverStatus<T, C>) => PromiseOrLiteral<V | undefined>) & {
     [IS_VIRTUAL]?: boolean;
 };
-export type VirtualResolver<T, V, C> = (obj: T, context: C, status: ResolverStatus<T, C>) => Promise<V | undefined>;
+export type VirtualResolver<T, V, C> = (obj: T, context: C, status: ResolverStatus<T, C>) => PromiseOrLiteral<V | undefined>;
 export declare const IS_VIRTUAL: unique symbol;
 /**
  * Create a resolver for a virtual property. A virtual property is a property that
@@ -15,7 +16,7 @@ export declare const virtual: <T, V, C>(virtualResolver: VirtualResolver<T, V, C
 export type PropertyResolverMap<T, C> = {
     [key in keyof T]?: PropertyResolver<T, T[key], C> | ReturnType<typeof virtual<T, T[key], C>>;
 };
-export type ResolverConverter<T, C> = (obj: any, context: C, status: ResolverStatus<T, C>) => Promise<T | undefined>;
+export type ResolverConverter<T, C> = (obj: any, context: C, status: ResolverStatus<T, C>) => PromiseOrLiteral<T | undefined>;
 export interface ResolverOptions<T, C> {
     schema?: Schema<T>;
     /**
@@ -67,3 +68,4 @@ export declare class Resolver<T, C> {
  */
 export declare function resolve<T, C>(properties: PropertyResolverMap<T, C>, options?: ResolverOptions<T, C>): Resolver<T, C>;
 export declare function resolve<T, C>(options: ResolverConfig<T, C>): Resolver<T, C>;
+export {};
